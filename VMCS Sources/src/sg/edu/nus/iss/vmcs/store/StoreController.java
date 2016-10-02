@@ -9,6 +9,11 @@ package sg.edu.nus.iss.vmcs.store;
 
 import java.io.IOException;
 
+import sg.edu.nus.iss.vmcs.system.DrinkPropertyLoader;
+import sg.edu.nus.iss.vmcs.system.Environment;
+import sg.edu.nus.iss.vmcs.system.PropertyLoader;
+import sg.edu.nus.iss.vmcs.util.VMCSException;
+
 /**
  * This control object manages changes in CashStore attributes and 
  * the DrinksStore attributes.
@@ -30,76 +35,18 @@ public class StoreController {
 	private CashStore cStore;
 	private DrinksStore dStore;
 
-	private PropertyLoader cashLoader;
-	private PropertyLoader drinksLoader;
-
-	/**
-	 * This constructor creates an instance of StoreController object.
-	 * @param cashLoader the cash loader.
-	 * @param drinksLoader the drinks loader.
-	 */
-	public StoreController(
-		PropertyLoader cashLoader,
-		PropertyLoader drinksLoader) {
-		this.cashLoader = cashLoader;
-		this.drinksLoader = drinksLoader;
-	}
+	private CashLoader cashLoader;
+	private DrinksLoader drinksLoader;
 
 	/**
 	 * This method instantiate the {@link CashStore}, {@link DrinksStore} and initialize it.
 	 * @throws IOException if fail to initialize stores; reading properties.
 	 */
 	public void initialize() throws IOException {
-		cStore = new CashStore();
-		dStore = new DrinksStore();
-		initializeStores();
-	}
-
-	/**
-	 * This method initiates the initialization of the {@link DrinkStore} and {@link CashStore}
-	 * from data read-in from an input file.
-	 * @throws IOException if fail to initialize stores; reading properties.
-	 */
-	private void initializeStores() throws IOException {
-		initializeCashStore();
-		initializeDrinkStore();
-	}
-
-	/**
-	 * This method initialize the {@link DrinksStore}.
-	 * @throws IOException if fail to initialize drinks store; reading properties.
-	 */
-	private void initializeDrinkStore() throws IOException {
-
-		// get the drink file from the environment property file;
-		int numOfItems = drinksLoader.getNumOfItems();
-		dStore.setStoreSize(numOfItems);
-
-		for (int i = 0; i < numOfItems; i++) {
-            DrinksStoreItem item = (DrinksStoreItem) drinksLoader.getItem(i);
-			StoreObject brand = item.getContent();
-			StoreObject existingBrand = dStore.findObject(brand.getName());
-			if (existingBrand != null) {
-			    item.setContent(existingBrand);
-			}
-			dStore.addItem(i, item);
-		}
-	}
-
-	/**
-	 * This method initialize the {@link CashStore}.
-	 * @throws IOException if fail to initialize cash store; reading properties.
-	 */
-	private void initializeCashStore() throws IOException {
-
-		// get the cash file from the environment property file;
-		int numOfItems = cashLoader.getNumOfItems();
-		cStore.setStoreSize(numOfItems);
-
-		for (int i = 0; i < numOfItems; i++) {
-		    CashStoreItem item = (CashStoreItem) cashLoader.getItem(i);
-			cStore.addItem(i, item);
-		}
+		this.cashLoader = new CashLoader();
+		this.drinksLoader = new DrinksLoader();
+		cStore = cashLoader.initialize();
+		dStore = drinksLoader.initialize();
 	}
 
 	/**
@@ -239,35 +186,8 @@ public class StoreController {
 	 */
 	public void closeDown() throws IOException {
 		// save back cash property;
-		saveCashProperties();
-        saveDrinksProperties();
-	}
-
-	/**
-	 * This method saves the attributes of the {@link CashStore} to the input file.
-	 * @throws IOException if fail to save cash properties.
-	 */
-	private void saveCashProperties() throws IOException {
-		int size = cStore.getStoreSize();
-		cashLoader.setNumOfItems(size);
-		for (int i = 0; i < size; i++) {
-			cashLoader.setItem(i, cStore.getStoreItem(i));
-		}
-		cashLoader.saveProperty();
-	}
-
-	/**
-	 * This method saves the attributes of the {@link DrinksStore} to the input file.
-	 * It saves the drink property when simulation is ended.
-	 * @throws IOException if fail to save drinks properties.
-	 */
-	private void saveDrinksProperties() throws IOException {
-		int size = dStore.getStoreSize();
-		drinksLoader.setNumOfItems(size);
-		for (int i = 0; i < size; i++) {
-			drinksLoader.setItem(i, dStore.getStoreItem(i));
-		}
-		drinksLoader.saveProperty();
+		this.cashLoader.save(cStore);
+		this.drinksLoader.save(dStore);
 	}
 
 	/**

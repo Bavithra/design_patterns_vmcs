@@ -28,14 +28,13 @@ public class MainController {
 	private TransactionController txCtrl;
 	private StoreController       storeCtrl;
 
-	private String      propertyFile;
-
 	/**
 	 * This constructor creates an instance of MainController object.
 	 * @param propertyFile the property file name.
+	 * @throws VMCSException 
 	 */
-	public MainController(String propertyFile) {
-		this.propertyFile = propertyFile;
+	public MainController(String propertyFile) throws VMCSException {
+		Environment.initialize(propertyFile);
 	}
 
 	/**
@@ -45,13 +44,9 @@ public class MainController {
 	 * @throws VMCSException if fail to initialize.
 	 */
 	public void start() throws VMCSException {
-		try {
-			initialize();
-			simulatorCtrl.displaySimulatorControlPanel();
-			simulatorCtrl.setSimulationActive(false);
-		} catch (VMCSException e) {
-			throw new VMCSException(e);
-		}
+		initialize();
+		simulatorCtrl.displaySimulatorControlPanel();
+		simulatorCtrl.setSimulationActive(false);
 	}
 
 	/**
@@ -60,14 +55,7 @@ public class MainController {
 	 */
 	public void initialize() throws VMCSException {
 		try {
-			Environment.initialize(propertyFile);
-			CashPropertyLoader cashLoader =
-				new CashPropertyLoader(Environment.getCashPropFile());
-			DrinkPropertyLoader drinksLoader =
-				new DrinkPropertyLoader(Environment.getDrinkPropFile());
-			cashLoader.initialize();
-			drinksLoader.initialize();
-			storeCtrl = new StoreController(cashLoader, drinksLoader);
+			storeCtrl = new StoreController();
 			storeCtrl.initialize();
 			simulatorCtrl = new SimulationController(this);
 			machineryCtrl = new MachineryController(this);
