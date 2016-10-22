@@ -27,6 +27,7 @@ public class CoinReceiver {
 	private ArrayList arlCoins;
 	/**Total amount of money entered so far during current transaction.*/
 	private int totalInserted;
+
 	
 	/**
 	 * This constructor creates an instance of the object.
@@ -44,8 +45,7 @@ public class CoinReceiver {
 	 * Money Inserted Display on the Customer Panel.
 	 */
 	public void startReceiver(){
-		txCtrl.getCustomerPanel().setCoinInputBoxActive(true);
-		txCtrl.getCustomerPanel().setTotalMoneyInserted(0);
+    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.STARTRECEIVECOIN, getTotalInserted());	                
 	}
 	
 	/**
@@ -72,33 +72,32 @@ public class CoinReceiver {
 	 * </ol>
 	 * @param weight the weight of the coin received&#46;
 	 */
-	public void receiveCoin(double weight){
-		CashStore cashStore=(CashStore)txCtrl.getMainController().getStoreController().getStore(Store.CASH);
-		Coin coin=cashStore.findCoin(weight);
-		if(coin==null){
-			txCtrl.getCustomerPanel().displayInvalidCoin(true);
-			txCtrl.getCustomerPanel().setChange("Invalid Coin");
-			//txCtrl.getCustomerPanel().setCoinInputBoxActive(false);
-		}
-		else{
-			txCtrl.getCustomerPanel().setCoinInputBoxActive(false);
-			int value=coin.getValue();
-			txCtrl.getCustomerPanel().displayInvalidCoin(false);
-			arlCoins.add(coin);
-			setTotalInserted(getTotalInserted() + value);
-			//int total=txCtrl.getCustomerPanel().addMoney(value);
-			txCtrl.getCustomerPanel().setTotalMoneyInserted(getTotalInserted());
-			txCtrl.getCustomerPanel().setChange("");
-			txCtrl.processMoneyReceived(getTotalInserted());
-		}
+	public void receiveCoin(double weight) 
+	{	          
+		txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.RESETCOIN, null);
+	    CashStore cStore = (CashStore) txCtrl.getMainController().getStoreController().getStore(Store.CASH);
+	    Coin recvdCoin = cStore.findCoin(weight); 	        
+		if(recvdCoin != null)           
+	    {	                
+			arlCoins.add(recvdCoin);
+			totalInserted+=recvdCoin.getValue();
+			setTotalInserted(totalInserted);
+	    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.VALIDCOIN, totalInserted);	                
+	    	txCtrl.processMoneyReceived(getTotalInserted());            
+	    }	            
+	    else	            
+	    {	                
+	    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.INVALIDCOIN, totalInserted);	            
+	    }  		
 	}
+	
 
 	/**
 	 * This method will activate the Coin Input Box so that further coins
 	 * can be received.
 	 */
 	public void continueReceive(){
-		txCtrl.getCustomerPanel().setCoinInputBoxActive(true);
+    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.STARTRECEIVECOIN, getTotalInserted());	                
 	}
 	
 	/**
@@ -114,7 +113,8 @@ public class CoinReceiver {
 				machineryCtrl.storeCoin(coin);
 			}
 			resetReceived();
-			txCtrl.getCustomerPanel().setTotalMoneyInserted(0);
+			//Bavithra
+	    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.RESETCOIN, 0);	                
 		}
 		catch(VMCSException ex){
 			txCtrl.terminateFault();
@@ -128,11 +128,7 @@ public class CoinReceiver {
 	 * receiving coins.
 	 */
 	public void stopReceive(){
-		CustomerPanel custPanel=txCtrl.getCustomerPanel();
-		if(custPanel==null){
-			return;
-		}
-		custPanel.setCoinInputBoxActive(false);
+    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.STOPRECEIVECOIN, totalInserted);	                
 	}
 	
 	/**
@@ -142,9 +138,7 @@ public class CoinReceiver {
 	public void refundCash(){
 		if(getTotalInserted()==0)
 			return;
-		txCtrl.getCustomerPanel().setChange(getTotalInserted());
-		txCtrl.getCustomerPanel().setTotalMoneyInserted(0);
-		txCtrl.getCustomerPanel().displayInvalidCoin(false);
+    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.REFUNDCOIN, totalInserted);	                
 		resetReceived();
 	}
 	
@@ -161,7 +155,7 @@ public class CoinReceiver {
 	 * @param active TRUE to activate, FALSE to deactivate the Coin Input Box.
 	 */
 	public void setActive(boolean active){
-		txCtrl.getCustomerPanel().setCoinInputBoxActive(active); 
+    	txCtrl.getCoinActionDispatcher().dispatch(CustomerPanel.STARTRECEIVECOIN, 0);	                
 	}
 
 	/**

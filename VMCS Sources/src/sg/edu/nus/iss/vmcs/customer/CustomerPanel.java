@@ -83,6 +83,12 @@ public class CustomerPanel extends Dialog {
 	private int screenHeight=screen.height;
 	
 	private static final String TITLE = "Customer Panel";
+	public static final Integer RESETCOIN = 0;
+	public static final Integer VALIDCOIN = 1;
+	public static final Integer INVALIDCOIN = 2;
+	public static final Integer REFUNDCOIN = 3;
+	public static final Integer STARTRECEIVECOIN = 4;
+	public static final Integer STOPRECEIVECOIN = 5;
 	private TransactionController txCtrl;
 
 	private Panel pan0=new Panel();
@@ -170,6 +176,7 @@ public class CustomerPanel extends Dialog {
         frameX=(screenWidth-frameWidth)/2;
         frameY=(screenHeight-frameHeight)/2;
         setBounds(frameX,frameY,frameWidth, frameHeight);
+        actionCommands();
 	}
 
 	/**
@@ -358,4 +365,15 @@ public class CustomerPanel extends Dialog {
 		Component c=this.getComponent(comp);
 		c.setEnabled(st);
 	}
+	
+	//configuring command classes
+	private void actionCommands()
+    {
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.RESETCOIN, new ResetCoinCommand(this));
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.VALIDCOIN, new ValidCoinCommand(this));
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.INVALIDCOIN, new InvalidCoinCommand(this));
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.REFUNDCOIN, new RefundCoinCommand(this));
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.STARTRECEIVECOIN, new StartReceiveCoinCommand(this));
+       txCtrl.getCoinActionDispatcher().addCommand(CustomerPanel.STOPRECEIVECOIN, new StopReceiveCoinCommand(this));
+    }
 }//End of class CustomerPanel

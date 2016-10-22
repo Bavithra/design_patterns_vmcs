@@ -35,6 +35,8 @@ public class TransactionController {
 	private DispenseController dispenseCtrl;
 	private ChangeGiver changeGiver;
 	private CoinReceiver coinReceiver;
+	CoinCommandInvoker coinActionDispatcher;
+
 
 	/**Set to TRUE when change is successfully issued during the transaction.*/
 	private boolean changeGiven=false;
@@ -54,6 +56,7 @@ public class TransactionController {
 		dispenseCtrl=new DispenseController(this);
 		coinReceiver=new CoinReceiver(this);
 		changeGiver=new ChangeGiver(this);
+		coinActionDispatcher = new CoinCommandInvoker();
 	}
 
 	/**
@@ -342,5 +345,12 @@ public class TransactionController {
 	 */
 	public void nullifyCustomerPanel(){
 		custPanel=null;
+	}
+	
+	/**
+	 * This method will return Invoker method for CoinCommands.
+	 */
+	public CoinCommandInvoker getCoinActionDispatcher() {
+		return coinActionDispatcher;
 	}
 }//End of class TransactionController
