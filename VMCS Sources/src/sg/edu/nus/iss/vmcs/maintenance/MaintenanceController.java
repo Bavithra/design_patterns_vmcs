@@ -215,7 +215,7 @@ public class MaintenanceController extends Observable {
 			notifyObservers();
 			
 			// Removed as a part of the Observer pattern implementation
-			mCtrl.getTransactionController().terminateTransaction();
+			//mCtrl.getTransactionController().terminateTransaction();
 		}
 	}
 	
