@@ -8,7 +8,10 @@
 package sg.edu.nus.iss.vmcs.system;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
+import sg.edu.nus.iss.vmcs.customer.CustomerPanel;
 import sg.edu.nus.iss.vmcs.customer.TransactionController;
 import sg.edu.nus.iss.vmcs.machinery.MachineryController;
 import sg.edu.nus.iss.vmcs.maintenance.MaintenanceController;
@@ -21,7 +24,7 @@ import sg.edu.nus.iss.vmcs.util.VMCSException;
  * @version 3.0 5/07/2003
  * @author Olivo Miotto, Pang Ping Li
  */
-public class MainController {
+public class MainController implements Observer{
 	private SimulationController  simulatorCtrl;
 	private MachineryController   machineryCtrl;
 	private MaintenanceController maintenanceCtrl;
@@ -62,6 +65,8 @@ public class MainController {
 			machineryCtrl.initialize();
 			maintenanceCtrl = new MaintenanceController(this);
 			txCtrl=new TransactionController(this);
+			// Added for implementing Observer pattern
+			maintenanceCtrl.addObserver(this);
 		} catch (IOException e) {
 			throw new VMCSException(
 				"MainController.initialize",
@@ -133,5 +138,25 @@ public class MainController {
 		machineryCtrl.closeDown();
 		maintenanceCtrl.closeDown();
 		simulatorCtrl.closeDown();
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o.equals(maintenanceCtrl)) {
+			// Get the state
+			if (maintenanceCtrl.getMaintainerLoggedInState()) {
+				// The Maintainer is logged in
+				txCtrl.terminateTransaction();
+			}else {
+				// The Maintainer is logged out
+				CustomerPanel custPanel= txCtrl.getCustomerPanel();
+				if(custPanel==null){
+					getSimulatorControlPanel().setActive(SimulatorControlPanel.ACT_CUSTOMER, true);
+				}
+				else{
+					txCtrl.refreshCustomerPanel();
+				}
+			}
+		}
 	}
 }//End of class MainController

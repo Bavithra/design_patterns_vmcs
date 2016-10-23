@@ -8,6 +8,7 @@
 package sg.edu.nus.iss.vmcs.maintenance;
 
 import java.awt.Frame;
+import java.util.Observable;
 
 import sg.edu.nus.iss.vmcs.customer.CustomerPanel;
 import sg.edu.nus.iss.vmcs.machinery.MachineryController;
@@ -27,11 +28,13 @@ import sg.edu.nus.iss.vmcs.util.VMCSException;
  * @version 3.0 5/07/2003
  * @author Olivo Miotto, Pang Ping Li
  */
-public class MaintenanceController {
+public class MaintenanceController extends Observable {
 	private MainController mCtrl;
 	private MaintenancePanel mpanel;
 	private AccessManager am;
-
+	// Introduced for implementing the Observable pattern
+	private boolean isMaintainerLoggedIn;
+	
 	/**
 	 * This constructor creates an instance of the MaintenanceController.
 	 * @param mctrl the MainController.
@@ -50,6 +53,14 @@ public class MaintenanceController {
 	}
 
 	/**
+	 * This method will be used by the observers of this class to retrieve the login status of maintainer.
+	 * @return true if the maintainer is logged in, else false.
+	 */
+	public boolean getMaintainerLoggedInState() {
+		return isMaintainerLoggedIn;
+	}
+	
+	/**
 	 * This method setup the maintenance panel and display it.
 	 */
 	public void displayMaintenancePanel() {
@@ -67,40 +78,6 @@ public class MaintenanceController {
 	 */
 	public AccessManager getAccessManager() {
 		return am;
-	}
-
-	/**
-	 * This method sets whether the maintainer login&#46;
-	 * When the MaintenanceController receives a message saying that the Maintainer has
-	 * successfully logged-in, the following will occur;
-	 * <br>
-	 * 1- Messages will be sent to activate the following elements of the MaintenancePanel:
-	 * CoinDisplay, DrinkDisplay, TotalCashDisplay, ExitButton, Transfer Cash Button and
-	 * Total Cash Button&#46;
-	 * <br>
-	 * 2- The Door will be instructed to set its status as unlocked, and then inform the 
-	 * MachinerySimulatorPanel to update the Door Status Display&#46;
-	 * <br>
-	 * 3- The SimulatorControlPanel will be instructed to deactivate the
-	 * ActivateCustomerPanelButton&#46;
-	 * <br>
-	 * 4- The TransactionController will be instructed to terminate and suspend
-	 * Customer Transactions&#46 Operation TerminateTransaction of TransactionController
-	 * will be used to accomplish this&#46
-	 * @param st If TRUE then login successfully, otherwise login fails.
-	 */
-	public void loginMaintainer(boolean st) {
-		mpanel.displayPasswordState(st);
-		mpanel.clearPassword();
-		if (st == true) {
-			// login successful
-			mpanel.setActive(MaintenancePanel.WORKING, true);
-			mpanel.setActive(MaintenancePanel.PSWD, false);
-			MachineryController machctrl = mCtrl.getMachineryController();
-			machctrl.setDoorState(false);
-			//Terminate customer transaction
-			mCtrl.getTransactionController().terminateTransaction();
-		}
 	}
 
 	/**
@@ -203,6 +180,46 @@ public class MaintenanceController {
 	}
 
 	/**
+	 * This method sets whether the maintainer login&#46;
+	 * When the MaintenanceController receives a message saying that the Maintainer has
+	 * successfully logged-in, the following will occur;
+	 * <br>
+	 * 1- Messages will be sent to activate the following elements of the MaintenancePanel:
+	 * CoinDisplay, DrinkDisplay, TotalCashDisplay, ExitButton, Transfer Cash Button and
+	 * Total Cash Button&#46;
+	 * <br>
+	 * 2- The Door will be instructed to set its status as unlocked, and then inform the 
+	 * MachinerySimulatorPanel to update the Door Status Display&#46;
+	 * <br>
+	 * 3- The SimulatorControlPanel will be instructed to deactivate the
+	 * ActivateCustomerPanelButton&#46;
+	 * <br>
+	 * 4- The TransactionController will be instructed to terminate and suspend
+	 * Customer Transactions&#46 Operation TerminateTransaction of TransactionController
+	 * will be used to accomplish this&#46
+	 * @param st If TRUE then login successfully, otherwise login fails.
+	 */
+	public void loginMaintainer(boolean st) {
+		mpanel.displayPasswordState(st);
+		mpanel.clearPassword();
+		if (st == true) {
+			// login successful
+			mpanel.setActive(MaintenancePanel.WORKING, true);
+			mpanel.setActive(MaintenancePanel.PSWD, false);
+			MachineryController machctrl = mCtrl.getMachineryController();
+			machctrl.setDoorState(false);
+			
+			//Terminate customer transaction
+			isMaintainerLoggedIn = true;
+			setChanged();
+			notifyObservers();
+			
+			// Removed as a part of the Observer pattern implementation
+			mCtrl.getTransactionController().terminateTransaction();
+		}
+	}
+	
+	/**
 	 * When the MaintenanceController receives a message saying that the Maintainer
 	 * has correctly logged-out, the following will occur:
 	 * <br>
@@ -232,13 +249,18 @@ public class MaintenanceController {
 		mpanel.setActive(MaintenancePanel.DIALOG, true);
 		
 		//Refresh Customer Panel
-		CustomerPanel custPanel=mCtrl.getTransactionController().getCustomerPanel();
-		if(custPanel==null){
-			mCtrl.getSimulatorControlPanel().setActive(SimulatorControlPanel.ACT_CUSTOMER, true);
-		}
-		else{
-			mCtrl.getTransactionController().refreshCustomerPanel();
-		}
+		isMaintainerLoggedIn = false;
+		setChanged();
+		notifyObservers();
+		
+		// Removed as a part of the Observer pattern implementation
+//		CustomerPanel custPanel=mCtrl.getTransactionController().getCustomerPanel();
+//		if(custPanel==null){
+//			mCtrl.getSimulatorControlPanel().setActive(SimulatorControlPanel.ACT_CUSTOMER, true);
+//		}
+//		else{
+//			mCtrl.getTransactionController().refreshCustomerPanel();
+//		}
 	}
 
 	/**
