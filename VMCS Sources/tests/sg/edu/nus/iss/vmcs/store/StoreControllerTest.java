@@ -1,13 +1,10 @@
 package sg.edu.nus.iss.vmcs.store;
 
-import junit.framework.TestCase;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import sg.edu.nus.iss.vmcs.system.CashPropertyLoader;
-import sg.edu.nus.iss.vmcs.system.DrinkPropertyLoader;
+import junit.framework.TestCase;
 import sg.edu.nus.iss.vmcs.system.Environment;
 import sg.edu.nus.iss.vmcs.system.MainController;
 
@@ -26,14 +23,8 @@ public class StoreControllerTest extends TestCase{
 	@Test
 	public void testStoreControllerConstructor() throws Exception{
 		Environment.initialize(propertyFilename);
-		CashPropertyLoader cashLoader =
-			new CashPropertyLoader(Environment.getCashPropFile());
-		DrinkPropertyLoader drinksLoader =
-			new DrinkPropertyLoader(Environment.getDrinkPropFile());
-		cashLoader.initialize();
-		drinksLoader.initialize();
 		//Act
-		StoreController storeController=new StoreController(cashLoader, drinksLoader);
+		StoreController storeController=new StoreController();
 		storeController.initialize();
 		//Assert
 		assertNotNull(storeController);
