@@ -42,18 +42,18 @@ public class DrinksStoreTest extends TestCase{
 		assertEquals(storeSize,drinksStore.getStoreSize());
 	}
 
-	@Test
-	public void testGetItems() throws Exception{
-		MainController mainCtrl=new MainController(propertyFilename);
-		mainCtrl.initialize();
-		StoreController storeController=mainCtrl.getStoreController();
-		storeController.initialize();
-		DrinksStore drinksStore=(DrinksStore)storeController.getStore(Store.DRINK);
-		//Act getItems
-		StoreItem[] storeItems=drinksStore.getItems();
-		//Assert
-		assertTrue((storeItems==null||storeItems.length>=0));
-	}
+//	@Test
+//	public void testGetItems() throws Exception{
+//		MainController mainCtrl=new MainController(propertyFilename);
+//		mainCtrl.initialize();
+//		StoreController storeController=mainCtrl.getStoreController();
+//		storeController.initialize();
+//		DrinksStore drinksStore=(DrinksStore)storeController.getStore(Store.DRINK);
+//		//Act getItems
+//		StoreItem[] storeItems=drinksStore.getItems();
+//		//Assert
+//		assertTrue((storeItems==null||storeItems.length>=0));
+//	}
 
 	@Test
 	public void testAddItem() throws Exception{

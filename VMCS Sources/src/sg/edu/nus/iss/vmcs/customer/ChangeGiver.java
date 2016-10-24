@@ -9,6 +9,7 @@ package sg.edu.nus.iss.vmcs.customer;
 
 import sg.edu.nus.iss.vmcs.store.CashStoreItem;
 import sg.edu.nus.iss.vmcs.store.Coin;
+import sg.edu.nus.iss.vmcs.store.IStoreItemIterator;
 import sg.edu.nus.iss.vmcs.store.Store;
 import sg.edu.nus.iss.vmcs.store.StoreController;
 import sg.edu.nus.iss.vmcs.store.StoreItem;
@@ -90,14 +91,28 @@ public class ChangeGiver {
 		boolean isAnyDenoEmpty=false;
 		MainController mainCtrl=txCtrl.getMainController();
 		StoreController storeCtrl=mainCtrl.getStoreController();
-		StoreItem[] cashStoreItems=storeCtrl.getStore(Store.CASH).getItems();
-		for(int i=0;i<cashStoreItems.length;i++){
-			StoreItem storeItem=cashStoreItems[i];
+		
+		//Iterator Pattern implemented
+		
+//		StoreItem[] cashStoreItems=storeCtrl.getStore(Store.CASH).getItems();
+//		for(int i=0;i<cashStoreItems.length;i++){
+//			StoreItem storeItem=cashStoreItems[i];
+//			CashStoreItem cashStoreItem=(CashStoreItem)storeItem;
+//			int quantity=cashStoreItem.getQuantity();
+//			if(quantity==0)
+//				isAnyDenoEmpty=true;
+//		}
+		
+		IStoreItemIterator iterator = storeCtrl.getStoreItemIterator(Store.CASH);
+		for (iterator.first(); !iterator.is_done(); iterator.next()) {
+			StoreItem storeItem = iterator.current_item();
 			CashStoreItem cashStoreItem=(CashStoreItem)storeItem;
 			int quantity=cashStoreItem.getQuantity();
 			if(quantity==0)
 				isAnyDenoEmpty=true;
 		}
+		
+		
 		custPanel.displayChangeStatus(isAnyDenoEmpty);
 	}
 }//End of class ChangeGiver

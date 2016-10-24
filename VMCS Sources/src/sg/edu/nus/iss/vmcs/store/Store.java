@@ -62,7 +62,7 @@ public abstract class Store {
 	 * This method returns the {@link StoreItem} corresponding to the index entered.
 	 * @return the array of {@link StoreItem}.
 	 */
-	public StoreItem[] getItems() {
+	private StoreItem[] getItems() {
 		return items;
 	}
 
@@ -130,5 +130,45 @@ public abstract class Store {
 	 */
 	public int getStoreSize() {
 		return size;
+	}
+
+	// Get Iterator
+	public IStoreItemIterator getIterator() {
+		return new StoreItemIterator();
+	}
+	
+	// Iterator Pattern
+	private class StoreItemIterator implements IStoreItemIterator {
+		
+		private int index = 0;
+
+		@Override
+		public void first() {
+			// TODO Auto-generated method stub
+			index = 0;
+		}
+
+		@Override
+		public void next() {
+			// TODO Auto-generated method stub
+			if(items != null && index < items.length - 1) {
+				index += 1;
+			}else {
+				index = -999;
+			}
+		}
+
+		@Override
+		public boolean is_done() {
+			return index == -999;
+		}
+
+		@Override
+		public StoreItem current_item() {
+			if(!is_done() && index != -999) {
+				return items[index];
+			}
+			return null;
+		}
 	}
 }//End of class Store

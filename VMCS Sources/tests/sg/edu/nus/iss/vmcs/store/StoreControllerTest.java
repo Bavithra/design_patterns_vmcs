@@ -180,30 +180,30 @@ public class StoreControllerTest extends TestCase{
 		}
 	}
 
-	@Test
-	public void testGetStoreItems() throws Exception{
-		MainController mainCtrl=new MainController(propertyFilename);
-		mainCtrl.initialize();
-		StoreController storeController=mainCtrl.getStoreController();
-		
-		storeController.initialize();
-		
-		//Act getStoreItems
-		StoreItem[] cashStoreItems=storeController.getStoreItems(Store.CASH);
-		for(int i=0;i<cashStoreItems.length;i++){
-			CashStoreItem cashStoreItem=(CashStoreItem)cashStoreItems[i];
-			//Assert
-			assertNotNull(cashStoreItem);
-		}
-		
-		//Act getStoreItems
-		StoreItem[] drinksStoreItems=storeController.getStoreItems(Store.DRINK);
-		for(int i=0;i<drinksStoreItems.length;i++){
-			DrinksStoreItem drinksStoreItem=(DrinksStoreItem)drinksStoreItems[i];
-			//Assert
-			assertNotNull(drinksStoreItem);
-		}
-	}
+	//@Test
+//	public void testGetStoreItems() throws Exception{
+//		MainController mainCtrl=new MainController(propertyFilename);
+//		mainCtrl.initialize();
+//		StoreController storeController=mainCtrl.getStoreController();
+//		
+//		storeController.initialize();
+//		
+//		//Act getStoreItems
+//		StoreItem[] cashStoreItems=storeController.getStoreItems(Store.CASH);
+//		for(int i=0;i<cashStoreItems.length;i++){
+//			CashStoreItem cashStoreItem=(CashStoreItem)cashStoreItems[i];
+//			//Assert
+//			assertNotNull(cashStoreItem);
+//		}
+//		
+//		//Act getStoreItems
+//		StoreItem[] drinksStoreItems=storeController.getStoreItems(Store.DRINK);
+//		for(int i=0;i<drinksStoreItems.length;i++){
+//			DrinksStoreItem drinksStoreItem=(DrinksStoreItem)drinksStoreItems[i];
+//			//Assert
+//			assertNotNull(drinksStoreItem);
+//		}
+//	}
 
 	@Test
 	public void testChangeStoreQty() throws Exception{

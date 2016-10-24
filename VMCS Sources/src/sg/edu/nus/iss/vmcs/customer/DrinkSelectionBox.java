@@ -14,6 +14,7 @@ import java.awt.Panel;
 
 import sg.edu.nus.iss.vmcs.store.DrinksBrand;
 import sg.edu.nus.iss.vmcs.store.DrinksStoreItem;
+import sg.edu.nus.iss.vmcs.store.IStoreItemIterator;
 import sg.edu.nus.iss.vmcs.store.Store;
 import sg.edu.nus.iss.vmcs.store.StoreController;
 import sg.edu.nus.iss.vmcs.store.StoreItem;
@@ -40,13 +41,16 @@ public class DrinkSelectionBox extends Panel{
 		MainController mainCtrl=txCtrl.getMainController();
 		StoreController storeCtrl=mainCtrl.getStoreController();
 		int drinkStoreSize=storeCtrl.getStoreSize(Store.DRINK);
-		StoreItem[] drinkStoreItems=storeCtrl.getStore(Store.DRINK).getItems();
+		//StoreItem[] drinkStoreItems=storeCtrl.getStore(Store.DRINK).getItems();
 		
 		drinkSelectionItems=new DrinkSelectionItem[drinkStoreSize];
 		
 		setLayout(new GridBagLayout());
-		for(int i=0;i<drinkStoreItems.length;i++){
-			StoreItem storeItem=drinkStoreItems[i];
+		
+		IStoreItemIterator iterator = storeCtrl.getStoreItemIterator(Store.DRINK);
+		int i = 0;
+		for (iterator.first(); !iterator.is_done(); iterator.next()) { 
+			StoreItem storeItem = iterator.current_item();
 			DrinksStoreItem drinksStoreItem=(DrinksStoreItem)storeItem;
 			StoreObject storeObject=drinksStoreItem.getContent();
 			DrinksBrand drinksBrand=(DrinksBrand)storeObject;
@@ -57,8 +61,24 @@ public class DrinkSelectionBox extends Panel{
 			drinkSelectionItems[i].addListener(new DrinkSelectionListener(txCtrl,i));
 			add(drinkSelectionItems[i],new GridBagConstraints(0,i,1,1,1.0,0.0,
 				    GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,
-				    new Insets(5,0,0,0),10,0));  
+				    new Insets(5,0,0,0),10,0));
+			i++;
 		}
+		
+//		for(int i=0;i<drinkStoreItems.length;i++){
+//			StoreItem storeItem=drinkStoreItems[i];
+//			DrinksStoreItem drinksStoreItem=(DrinksStoreItem)storeItem;
+//			StoreObject storeObject=drinksStoreItem.getContent();
+//			DrinksBrand drinksBrand=(DrinksBrand)storeObject;
+//			String drinksName=drinksBrand.getName();
+//			int drinksPrice=drinksBrand.getPrice();
+//			int drinksQuantity=drinksStoreItem.getQuantity();
+//			drinkSelectionItems[i]=new DrinkSelectionItem(i,drinksName,drinksPrice,drinksQuantity,true,false);
+//			drinkSelectionItems[i].addListener(new DrinkSelectionListener(txCtrl,i));
+//			add(drinkSelectionItems[i],new GridBagConstraints(0,i,1,1,1.0,0.0,
+//				    GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,
+//				    new Insets(5,0,0,0),10,0));  
+//		}
 	}
 	
 	/**

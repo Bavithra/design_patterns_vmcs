@@ -56,19 +56,33 @@ public class StoreViewer extends Panel {
 		int sSize = storeCtrl.getStoreSize(type);
 		viewItems = new LabelledDisplay[sSize];
 
-		StoreItem[] storeItem = storeCtrl.getStoreItems(type);
+		//StoreItem[] storeItem = storeCtrl.getStoreItems(type);
 		this.setLayout(new GridLayout(0, 1));
 		this.add(pl);
 
-		for (int i = 0; i < sSize; i++) {
-			String name = storeItem[i].getContent().getName();
+		IStoreItemIterator iterator = storeCtrl.getStoreItemIterator(type);
+		int i = 0;
+		for (iterator.first(); !iterator.is_done(); iterator.next()) {
+			String name = iterator.current_item().getContent().getName();
 			viewItems[i] = new LabelledDisplay(name,
 						LabelledDisplay.DEFAULT,
 						LabelledDisplay.GRID);
 			viewItems[i].addListener(
                         new StoreViewerListener(type, i, storeCtrl));
 			this.add(viewItems[i]);
+			i++;
 		}
+
+
+		// for (int i = 0; i < sSize; i++) {
+		// 	String name = storeItem[i].getContent().getName();
+		// 	viewItems[i] = new LabelledDisplay(name,
+		// 				LabelledDisplay.DEFAULT,
+		// 				LabelledDisplay.GRID);
+		// 	viewItems[i].addListener(
+        //                 new StoreViewerListener(type, i, storeCtrl));
+		// 	this.add(viewItems[i]);
+		// }
 		
 		update();
 	}
@@ -77,12 +91,22 @@ public class StoreViewer extends Panel {
 	 * Update the display fields with the data provided.
 	 */
 	public void update () {
-		StoreItem[] storeItem = storeCtrl.getStoreItems(type);
-		for (int i = 0; i < storeItem.length; i++) {
-			int val = storeItem[i].getQuantity();
+		
+		IStoreItemIterator iterator = storeCtrl.getStoreItemIterator(type);
+		int i = 0;
+		for (iterator.first(); !iterator.is_done(); iterator.next()) {
+			int val = iterator.current_item().getQuantity();
 			String sval = String.valueOf(val);
 			viewItems[i].setValue(sval);
+			i++;
 		}
+		
+//		StoreItem[] storeItem = storeCtrl.getStoreItems(type);
+//		for (int i = 0; i < storeItem.length; i++) {
+//			int val = storeItem[i].getQuantity();
+//			String sval = String.valueOf(val);
+//			viewItems[i].setValue(sval);
+//		}
 	}
 
 	/**

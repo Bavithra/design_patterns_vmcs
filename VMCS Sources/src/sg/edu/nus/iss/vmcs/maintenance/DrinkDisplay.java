@@ -41,9 +41,13 @@ public class DrinkDisplay extends Panel {
 		this.setLayout(new BorderLayout());
 		int len;
 		len = storeCtrl.getStoreSize(Store.DRINK);
-		StoreItem[] items = storeCtrl.getStoreItems(Store.DRINK);
+		//StoreItem[] items = storeCtrl.getStoreItems(Store.DRINK);
 
-		bi = new ButtonItemDisplay(TITLE, items, len);
+		//bi = new ButtonItemDisplay(TITLE, items, len);
+
+		IStoreItemIterator iterator = storeCtrl.getStoreItemIterator(Store.DRINK);
+		
+		bi = new ButtonItemDisplay(TITLE, iterator, len);
 
 		bi.addListener(new DrinkDisplayListener(mCtrl));
 		bi.clear();
