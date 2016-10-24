@@ -9,9 +9,11 @@ package sg.edu.nus.iss.vmcs.store;
 
 import java.io.IOException;
 
-import sg.edu.nus.iss.vmcs.system.DrinkPropertyLoader;
+import sg.edu.nus.iss.vmcs.store.loader.CashLoader;
+import sg.edu.nus.iss.vmcs.store.loader.DrinksLoader;
 import sg.edu.nus.iss.vmcs.system.Environment;
 import sg.edu.nus.iss.vmcs.system.PropertyLoader;
+import sg.edu.nus.iss.vmcs.system.loader.property.DrinkPropertyLoader;
 import sg.edu.nus.iss.vmcs.util.VMCSException;
 
 /**

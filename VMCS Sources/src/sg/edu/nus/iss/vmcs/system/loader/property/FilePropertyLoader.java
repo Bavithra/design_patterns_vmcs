@@ -5,7 +5,7 @@
  * than for the purpose for which it has been supplied.
  *
  */
-package sg.edu.nus.iss.vmcs.system;
+package sg.edu.nus.iss.vmcs.system.loader.property;
 
 /*
  * Copyright 2003 ISS.
@@ -19,6 +19,7 @@ import java.util.*;
 import java.io.*;
 
 import sg.edu.nus.iss.vmcs.store.*;
+import sg.edu.nus.iss.vmcs.system.PropertyLoader;
 
 /**
  * This control object implements the interface, PropertyLoader, to provide the generic functionality
