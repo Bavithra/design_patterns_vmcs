@@ -5,13 +5,18 @@ import java.io.IOException;
 import sg.edu.nus.iss.vmcs.store.CashStore;
 import sg.edu.nus.iss.vmcs.store.CashStoreItem;
 import sg.edu.nus.iss.vmcs.store.Store;
+import sg.edu.nus.iss.vmcs.store.loader.StoreLoader.StoreType;
 import sg.edu.nus.iss.vmcs.system.Environment;
 import sg.edu.nus.iss.vmcs.system.loader.property.CashPropertyLoader;
 
 
-public class CashPropertyDAO implements LoaderDAO{
+public class CashPropertyDAO extends LoaderDAO{
 	
 	private CashPropertyLoader cashLoader;
+	
+	public CashPropertyDAO(StorageType storageType){
+		super(StoreType.CASH, storageType);
+	}
 
 	@Override
 	public CashStore ititialize() throws IOException {		

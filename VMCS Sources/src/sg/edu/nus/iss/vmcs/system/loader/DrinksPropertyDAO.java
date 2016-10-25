@@ -6,12 +6,17 @@ import sg.edu.nus.iss.vmcs.store.DrinksStore;
 import sg.edu.nus.iss.vmcs.store.DrinksStoreItem;
 import sg.edu.nus.iss.vmcs.store.Store;
 import sg.edu.nus.iss.vmcs.store.StoreObject;
+import sg.edu.nus.iss.vmcs.store.loader.StoreLoader.StoreType;
 import sg.edu.nus.iss.vmcs.system.Environment;
 import sg.edu.nus.iss.vmcs.system.loader.property.DrinkPropertyLoader;
 
-public class DrinksPropertyDAO implements LoaderDAO{
+public class DrinksPropertyDAO extends LoaderDAO{
 	
 	private DrinkPropertyLoader drinksLoader;
+	
+	public DrinksPropertyDAO(StorageType storageType){
+		super(StoreType.DRINK, storageType);
+	}
 
 	@Override
 	public DrinksStore ititialize()  throws IOException {

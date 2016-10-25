@@ -4,15 +4,11 @@ import java.io.IOException;
 
 import sg.edu.nus.iss.vmcs.store.DrinksStore;
 import sg.edu.nus.iss.vmcs.store.Store;
-import sg.edu.nus.iss.vmcs.system.loader.DrinksPropertyDAO;
 
 public class DrinksLoader extends StoreLoader{
 	
 	public DrinksLoader(){
-		super();
-		if(loaderDAO == null)
-			if(type.equalsIgnoreCase(PROPERTY))
-				loaderDAO = new DrinksPropertyDAO();
+		super(StoreType.DRINK);
 	}
 
 	@Override
