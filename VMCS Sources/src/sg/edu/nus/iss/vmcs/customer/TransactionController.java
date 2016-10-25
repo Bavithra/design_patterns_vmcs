@@ -17,6 +17,7 @@ package sg.edu.nus.iss.vmcs.customer;
 
 import java.awt.Frame;
 
+import sg.edu.nus.iss.vmcs.customer.state.ReceiveCoinState;
 import sg.edu.nus.iss.vmcs.store.DrinksBrand;
 import sg.edu.nus.iss.vmcs.store.Store;
 import sg.edu.nus.iss.vmcs.store.StoreItem;
@@ -36,6 +37,8 @@ public class TransactionController {
 	private ChangeGiver changeGiver;
 	private CoinReceiver coinReceiver;
 	CoinCommandInvoker coinActionDispatcher;
+	//transactionState wrapper
+	TransactionChain transactionChain;
 
 
 	/**Set to TRUE when change is successfully issued during the transaction.*/
@@ -57,6 +60,7 @@ public class TransactionController {
 		coinReceiver=new CoinReceiver(this);
 		changeGiver=new ChangeGiver(this);
 		coinActionDispatcher = new CoinCommandInvoker();
+		transactionChain = new TransactionChain();
 	}
 
 	/**
@@ -75,9 +79,10 @@ public class TransactionController {
 	    custPanel = new CustomerPanel((Frame) scp, this);
 		custPanel.display();
 		dispenseCtrl.updateDrinkPanel();
-		dispenseCtrl.allowSelection(true);
+//		dispenseCtrl.allowSelection(true);
 		changeGiver.displayChangeStatus();
 		coinReceiver.setActive(false);
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -105,9 +110,10 @@ public class TransactionController {
 		changeGiver.resetChange();
 		dispenseCtrl.ResetCan();
 		changeGiver.displayChangeStatus();
-		dispenseCtrl.allowSelection(false);
+//		dispenseCtrl.allowSelection(false);
 		coinReceiver.startReceiver();
-		custPanel.setTerminateButtonActive(true);
+//		custPanel.setTerminateButtonActive(true);
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -156,10 +162,11 @@ public class TransactionController {
 			getCustomerPanel().setChange(0);
 		}
 		coinReceiver.storeCash();
-		dispenseCtrl.allowSelection(true);
+//		dispenseCtrl.allowSelection(true);
 		
 		refreshMachineryDisplay();
 		System.out.println("CompleteTransaction: End");
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -170,10 +177,10 @@ public class TransactionController {
 	 */
 	public void terminateFault(){
 		System.out.println("TerminateFault: Begin");
-		dispenseCtrl.allowSelection(false);
+//		dispenseCtrl.allowSelection(false);
 		coinReceiver.refundCash();
 		refreshMachineryDisplay();
-		System.out.println("TerminateFault: End");
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -188,16 +195,17 @@ public class TransactionController {
 	 * <br>
 	 * 3- The DrinkSelectionBox is then reset to allow further transactions&#46;
 	 */
-	public void terminateTransaction(){
+	public void terminateTransaction() {
 		System.out.println("TerminateTransaction: Begin");
-		dispenseCtrl.allowSelection(false);
+//		dispenseCtrl.allowSelection(false);
 		coinReceiver.stopReceive();
 		coinReceiver.refundCash();
-		if(custPanel!=null){
-			custPanel.setTerminateButtonActive(false);
-		}
+//		if(custPanel!=null){
+//			custPanel.setTerminateButtonActive(false);
+//		}
 		refreshMachineryDisplay();
 		System.out.println("TerminateTransaction: End");
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -207,9 +215,10 @@ public class TransactionController {
 		System.out.println("CancelTransaction: Begin");
 		coinReceiver.stopReceive();
 		coinReceiver.refundCash();
-		dispenseCtrl.allowSelection(true);
+//		dispenseCtrl.allowSelection(true);
 		refreshMachineryDisplay();
 		System.out.println("CancelTransaction: End");
+		transactionChain.handle(this);
 	}
 	
 	/**
@@ -222,9 +231,11 @@ public class TransactionController {
 		}
 		*/
 		dispenseCtrl.updateDrinkPanel();
-		dispenseCtrl.allowSelection(true);
+//		dispenseCtrl.allowSelection(true);
 		changeGiver.displayChangeStatus();
-		custPanel.setTerminateButtonActive(true);
+//		custPanel.setTerminateButtonActive(true);
+		transactionChain.setState(new ReceiveCoinState());
+		transactionChain.handle(this);
 	}
 	
 	/**
