@@ -60,6 +60,7 @@ public class TransactionController {
 		coinReceiver=new CoinReceiver(this);
 		changeGiver=new ChangeGiver(this);
 		coinActionDispatcher = new CoinCommandInvoker();
+		custPanel = createCustomerPanel();
 		transactionContext = new TransactionContext(this);
 	}
 
@@ -70,13 +71,21 @@ public class TransactionController {
 	public MainController getMainController() {
 		return mainCtrl;
 	}
+	
+	public CustomerPanel createCustomerPanel() {
+		SimulatorControlPanel scp = mainCtrl.getSimulatorControlPanel();
+		return new DefaultCustomerPanelBuilder()
+				.buildCoinInputBox(new CoinInputBox(this))
+				.buildDrinkSelectionBox(new DrinkSelectionBox(this))
+				.create((Frame) scp, this);
+	}
 
 	/**
 	 * This method displays and initialize the CustomerPanel.
 	 */
 	public void displayCustomerPanel() {
-		SimulatorControlPanel scp = mainCtrl.getSimulatorControlPanel();
-	    custPanel = new CustomerPanel((Frame) scp, this);
+		/*SimulatorControlPanel scp = mainCtrl.getSimulatorControlPanel();
+	    custPanel = new CustomerPanel((Frame) scp, this);*/
 		custPanel.display();
 		dispenseCtrl.updateDrinkPanel();
 		dispenseCtrl.allowSelection(true);

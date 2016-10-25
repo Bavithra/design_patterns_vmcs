@@ -112,7 +112,7 @@ public class CustomerPanel extends Dialog {
      * @param fr the parent frame
      * @param ctrl the Transaction Controller
      */
-	public CustomerPanel(Frame fr, TransactionController ctrl) {
+    public CustomerPanel(Frame fr, TransactionController ctrl, CustomerPanelBuilder customerPanelBuilder){
 		super(fr, TITLE, false);
 		
 		txCtrl = ctrl;
@@ -125,8 +125,8 @@ public class CustomerPanel extends Dialog {
 			}
 		});
 		
-		coinInputBox=new CoinInputBox(txCtrl);
-		drinkSelectionBox=new DrinkSelectionBox(txCtrl);
+		coinInputBox=customerPanelBuilder.getCoinInputBox();
+		drinkSelectionBox=customerPanelBuilder.getDrinkSelectionBox();
 		TerminateButtonListener terminateButtonListener=new TerminateButtonListener(txCtrl);
 		
 		coinInputBox.setActive(false);
